@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="colors_and_type.css">
+<link rel="icon" href="assets/reeco-mark.svg">
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+  body { margin: 0; background: #fff; color: var(--fg-1); font-family: var(--font-sans); }
+  ::selection { background: var(--mint-100); color: var(--navy-900); }
+  a { color: var(--fg-link); text-decoration: none; font-weight: var(--fw-semi); }
+  a:hover { text-decoration: underline; }
+
+  /* NAV */
+  .nav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.88); backdrop-filter: saturate(180%) blur(14px); -webkit-backdrop-filter: saturate(180%) blur(14px); border-bottom: 1px solid var(--border-1); }
+  .nav-inner { max-width: 1240px; margin: 0 auto; padding: 18px 36px; display: flex; align-items: center; gap: 28px; }
+  .nav-brand { display: flex; align-items: center; gap: 14px; }
+  .nav-brand img { height: 22px; display: block; }
+  .nav-divider { width: 1px; height: 22px; background: var(--stone-300); flex-shrink: 0; }
+  .nav-context { font-size: 12px; color: var(--stone-700); font-weight: var(--fw-medium); letter-spacing: 0.1px; white-space: nowrap; }
+  .nav-context strong { color: var(--navy-900); font-weight: var(--fw-bold); }
+  .nav-links { display: none; margin-left: auto; gap: 26px; align-items: center; }
+  .nav-links a { color: var(--navy-900); font-size: 14px; font-weight: var(--fw-bold); white-space: nowrap; text-decoration: none; }
+  .nav-links a:hover { color: var(--mint-700); }
+  .nav-cta { margin-left: auto; }
+  @media (min-width: 1060px) { .nav-links { display: flex; } .nav-cta { margin-left: 28px; } }
+  @media (max-width: 720px) { .nav-inner { padding: 14px 20px; gap: 14px; } .nav-context { display: none; } .nav-divider { display: none; } }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: var(--radius-xl); font-size: 14px; font-weight: var(--fw-semi); border: 1px solid transparent; cursor: pointer; transition: all var(--duration-med) var(--ease-out); text-decoration: none; font-family: var(--font-sans); }
+  .btn-primary { background: var(--mint-500); color: #fff; }
+  .btn-primary:hover { background: var(--mint-700); text-decoration: none; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .btn-navy { background: var(--navy-900); color: #fff; }
+  .btn-navy:hover { background: #000; text-decoration: none; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .btn-on-mint { background: #fff; color: var(--navy-900); }
+  .btn-on-mint:hover { background: var(--navy-900); color: #fff; text-decoration: none; }
+  .btn-lg { padding: 14px 26px; font-size: 15px; }
+  .btn .arr { transition: transform var(--duration-med) var(--ease-out); }
+  .btn:hover .arr { transform: translateX(3px); }
+  .btn .arr-down { transition: transform var(--duration-med) var(--ease-out); }
+  .btn:hover .arr-down { transform: translateY(3px); }
+
+  /* SECTION SHELL */
+  section { padding: 104px 36px; position: relative; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  .eyebrow { font-size: 11px; font-weight: var(--fw-bold); letter-spacing: 2.5px; text-transform: uppercase; color: var(--mint-700); display: inline-flex; align-items: center; gap: 8px; }
+  .eyebrow::before { content: "///"; color: var(--mint-500); letter-spacing: 0; }
+  .section-title { font-size: 46px; font-weight: var(--fw-black); letter-spacing: -0.014em; line-height: 1.08; color: var(--navy-900); margin: 16px 0 18px; max-width: 920px; text-wrap: balance; }
+  .section-sub { font-size: 17px; line-height: 1.6; color: var(--stone-700); max-width: 760px; margin: 0 0 56px; }
+  @media (max-width: 720px) { section { padding: 64px 22px; } .section-title { font-size: 32px; } .section-sub { font-size: 15px; margin-bottom: 40px; } }
+
+  /* HERO */
+  .hero { position: relative; overflow: hidden; background: var(--mint-500); color: var(--navy-900); padding: 56px 32px 0; }
+  .hero::before { content: ""; position: absolute; inset: auto -160px -240px auto; width: 580px; height: 580px; background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.32), transparent 62%); pointer-events: none; }
+  .hero-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.35fr 1fr; gap: 64px; align-items: start; padding-bottom: 120px; position: relative; z-index: 1; }
+  .hero h1 { font-size: clamp(40px, 5.4vw, 68px); font-weight: var(--fw-black); letter-spacing: -0.025em; line-height: 1.03; color: var(--navy-900); margin: 0 0 16px; text-wrap: balance; }
+  .hero h1 em { font-style: normal; color: var(--navy-900); background: none; padding: 0; border-radius: 0; font-size: 0.6em; font-weight: var(--fw-regular); opacity: 0.42; margin: 0 0.04em; vertical-align: 0.22em; font-family: var(--font-sans); }
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: 10px; background: rgba(10, 24, 74, 0.12); color: var(--navy-900); padding: 6px 14px; border-radius: 999px; font-size: 11px; font-weight: var(--fw-bold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 28px; }
+  .hero-eyebrow .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--navy-900); animation: pulse 2s var(--ease-out) infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .hero-sub { font-size: 19px; line-height: 1.55; color: var(--navy-900); max-width: 620px; opacity: 0.85; margin: 0 0 28px; font-weight: var(--fw-medium); }
+  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  /* MEETING CARD */
+  .meeting-card { background: #fff; border-radius: var(--radius-2xl); padding: 28px; box-shadow: var(--shadow-xl); color: var(--navy-900); position: relative; }
+  .meeting-eyebrow { font-size: 11px; font-weight: var(--fw-bold); letter-spacing: 2px; text-transform: uppercase; color: var(--mint-700); }
+  .meeting-title { font-size: 22px; font-weight: var(--fw-bold); color: var(--navy-900); margin: 6px 0 20px; letter-spacing: -0.008em; line-height: 1.2; }
+  .meeting-when { display: grid; grid-template-columns: 68px 1fr; gap: 16px; align-items: center; padding: 20px 0; border-top: 1px solid var(--stone-200); }
+  .meeting-when-date { display: flex; flex-direction: column; align-items: center; background: var(--mint-100); border-radius: var(--radius-lg); padding: 10px 0; }
+  .meeting-when-date .day { font-size: 22px; font-weight: var(--fw-black); letter-spacing: -0.01em; line-height: 1; color: var(--navy-900); font-feature-settings: "tnum"; }
+  .meeting-when-date .mon { font-size: 10px; font-weight: var(--fw-bold); letter-spacing: 1.5px; text-transform: uppercase; color: var(--mint-800); margin-top: 6px; }
+  .meeting-when-meta { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .meeting-when-meta .l1 { font-size: 15px; font-weight: var(--fw-bold); color: var(--navy-900); letter-spacing: -0.005em; }
+  .meeting-when-meta .l2, .meeting-when-meta .l3 { font-size: 13px; color: var(--stone-700); font-weight: var(--fw-medium); line-height: 1.4; }
+  .meeting-attendees { border-top: 1px solid var(--stone-200); padding-top: 18px; }
+  .attendee-label { font-size: 11px; font-weight: var(--fw-bold); letter-spacing: 1.5px; text-transform: uppercase; color: var(--stone-500); margin-bottom: 12px; }
+  .roster { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 18px; }
+  .roster-item { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .roster-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--mint-100); color: var(--mint-800); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: var(--fw-bold); flex-shrink: 0; }
+  .roster-avatar.corp { background: var(--navy-900); color: #fff; }
+  .roster-avatar.acct { background: var(--sky-100); color: #1A6FA8; }
+  .roster-info { min-width: 0; }
+  .roster-name { font-size: 12.5px; font-weight: var(--fw-bold); color: var(--navy-900); line-height: 1.2; }
+  .roster-role { font-size: 10.5px; color: var(--stone-500); line-height: 1.3; margin-top: 1px; }
+  .attendee-row { display: flex; align-items: center; gap: 12px; padding: 4px 0; }
+  .attendee-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--navy-900); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: var(--fw-bold); flex-shrink: 0; }
+  .attendee-info { flex: 1; min-width: 0; }
+  .attendee-name { font-size: 13px; font-weight: var(--fw-bold); color: var(--navy-900); }
+  .attendee-role { font-size: 11px; color: var(--stone-500); }
+  @media (max-width: 980px) { .hero-inner { grid-template-columns: 1fr; padding-bottom: 100px; gap: 40px; } .hero { padding: 56px 22px 0; } }
+
+  /* HERO TIMELINE STRIP */
+  .hero-timeline { position: relative; z-index: 2; max-width: 1200px; margin: -80px auto 0; padding: 28px 36px 80px; }
+  .hero-timeline-card { background: #fff; border-radius: var(--radius-2xl); box-shadow: var(--shadow-lg); padding: 28px 32px; display: grid; grid-template-columns: minmax(190px, auto) repeat(4, 1fr); gap: 24px; align-items: start; }
+  .hero-timeline-label { display: flex; flex-direction: column; gap: 6px; padding-top: 8px; }
+  .hero-timeline-eyebrow { font-size: 10px; font-weight: var(--fw-bold); letter-spacing: 2px; text-transform: uppercase; color: var(--mint-700); }
+  .hero-timeline-title { font-size: 18px; font-weight: var(--fw-bold); color: var(--navy-900); letter-spacing: -0.005em; line-height: 1.2; }
+  .ht-step { display: flex; flex-direction: column; gap: 6px; padding-left: 24px; padding-top: 18px; border-left: 1px solid var(--stone-200); position: relative; }
+  .ht-step::before { content: ""; position: absolute; left: -6px; top: 14px; width: 11px; height: 11px; border-radius: 50%; background: var(--mint-500); border: 2px solid #fff; box-shadow: 0 0 0 1px var(--stone-200); }
+  .ht-step.future::before { background: #fff; border: 2px solid var(--mint-500); }
+  .ht-step.live::before { background: var(--sky-500); box-shadow: 0 0 0 1px var(--stone-200), 0 0 0 5px rgba(59,176,244,0.18); }
+  .ht-step-num { font-size: 10px; font-weight: var(--fw-bold); letter-spacing: 2px; text-transform: uppercase; color: var(--stone-500); }
+  .ht-step.live .ht-step-num { color: var(--sky-500); }
+  .ht-step-title { font-size: 14px; font-weight: var(--fw-bold); color: var(--navy-900); line-height: 1.35; letter-spacing: -0.005em; }
+  .ht-step-date { font-size: 12px; color: var(--stone-700); font-weight: var(--fw-medium); }
+  @media (max-width: 900px) { .hero-timeline { margin-top: -60px; padding: 20px 22px 56px; } .hero-timeline-card { grid-template-columns: 1fr; gap: 18px; padding: 22px; } .ht-step { padding-left: 22px; padding-bottom: 18px; padding-top: 0; border-left: none; } .ht-step:last-child { padding-bottom: 0; } .ht-step::before { left: 0; top: 4px; } }
+
+  /* PROBLEM + SOLUTION */
+  .ps-pair { display: grid; grid-template-columns: 80px 1fr 60px 1fr; gap: 24px; align-items: stretch; padding: 36px 0; border-top: 1px solid var(--stone-200); }
+  .ps-pair:first-child { border-top: none; padding-top: 0; }
+  .ps-pair:last-child { padding-bottom: 0; }
+  .ps-num { font-size: 64px; font-weight: var(--fw-black); letter-spacing: -0.03em; line-height: 1; color: var(--navy-900); font-feature-settings: "tnum"; }
+  .ps-card { padding: 28px; border-radius: var(--radius-2xl); display: flex; flex-direction: column; }
+  .ps-card.problem { background: var(--rose-100); border: 1px solid var(--rose-200); }
+  .ps-card.answer { background: var(--mint-100); border: 1px solid var(--mint-200); }
+  .ps-eyebrow { font-size: 10px; font-weight: var(--fw-bold); letter-spacing: 2px; text-transform: uppercase; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 12px; }
+  .ps-eyebrow.problem { color: #B81E63; }
+  .ps-eyebrow.answer { color: var(--mint-800); }
+  .ps-eyebrow .ps-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .ps-eyebrow.problem .ps-dot { background: var(--rose-500); }
+  .ps-eyebrow.answer .ps-dot { background: var(--mint-500); }
+  .ps-headline { font-size: 19px; font-weight: var(--fw-bold); color: var(--navy-900); margin: 0 0 12px; letter-spacing: -0.005em; line-height: 1.25; }
+  .ps-body { font-size: 14.5px; line-height: 1.6; color: var(--stone-700); margin: 0; flex-grow: 1; }
+  .ps-body strong { color: var(--navy-900); font-weight: var(--fw-bold); }
+  .ps-arrow { display: flex; align-items: center; justify-content: center; color: var(--mint-500); }
+  @media (max-width: 900px) { .ps-pair { grid-template-columns: 1fr; gap: 14px; padding: 28px 0; } .ps-num { font-size: 44px; } .ps-arrow { transform: rotate(90deg); margin: 4px auto; } }
+
+  /* CALLOUT QUOTE */
+  .callout-quote { margin-top: 56px; background: var(--navy-900); color: #fff; border-radius: var(--radius-3xl); padding: 44px 56px; display: grid; grid-template-columns: 80px 1fr; gap: 32px; align-items: start; position: relative; overflow: hidden; }
+  .callout-quote.mint { background: var(--mint-500); color: var(--navy-900); }
+  .callout-quote::before { content: ""; position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: rgba(255,255,255,0.06); border-radius: 50%; }
+  .callout-quote.mint::before { background: rgba(255,255,255,0.22); }
+  .callout-mark { font-family: Georgia, serif; font-size: 120px; font-weight: var(--fw-black); line-height: 0.6; color: var(--mint-300); position: relative; z-index: 1; }
+  .callout-quote.mint .callout-mark { color: rgba(10,24,74,0.25); }
+  .callout-body { position: relative; z-index: 1; }
+  .callout-body p { font-size: 21px; line-height: 1.5; font-weight: var(--fw-medium); margin: 0 0 24px; color: inherit; letter-spacing: -0.005em; }
+  .callout-attr { display: flex; align-items: center; gap: 14px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.18); }
+  .callout-quote.mint .callout-attr { border-top-color: rgba(10,24,74,0.2); }
+  .callout-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--mint-300); color: var(--navy-900); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: var(--fw-black); flex-shrink: 0; }
+  .callout-quote.mint .callout-avatar { background: var(--navy-900); color: #fff; }
+  .callout-name { font-size: 16px; font-weight: var(--fw-bold); color: inherit; }
+  .callout-meta { font-size: 13px; opacity: 0.75; margin-top: 2px; }
+  @media (max-width: 720px) { .callout-quote { padding: 32px 28px; grid-template-columns: 1fr; gap: 12px; } .callout-mark { font-size: 64px; margin-bottom: -20px; } .callout-body p { font-size: 17px; } }
+
+  /* PLATFORM */
+  .platform-section { background: var(--stone-100); }
+  .platform-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .platform-card { background: #fff; border: 1px solid var(--stone-200); border-radius: var(--radius-2xl); padding: 32px; display: flex; flex-direction: column; position: relative; transition: all var(--duration-med) var(--ease-out); }
+  .platform-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .platform-card.core { border-color: var(--navy-200); box-shadow: var(--shadow-sm); }
+  .platform-card.addon { border: 2px solid var(--mint-500); }
+  .platform-card-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; padding-bottom: 18px; border-bottom: 1px solid var(--stone-200); }
+  .platform-icon { width: 44px; height: 44px; border-radius: var(--radius-lg); background: var(--mint-100); color: var(--mint-800); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .platform-card.core .platform-icon { background: var(--navy-900); color: var(--mint-300); }
+  .platform-card h3 { font-size: 20px; font-weight: var(--fw-bold); color: var(--navy-900); margin: 0; letter-spacing: -0.01em; line-height: 1.2; }
+  .platform-card p { font-size: 14.5px; line-height: 1.6; color: var(--stone-700); margin: 0; }
+  .platform-card p strong { color: var(--navy-900); font-weight: var(--fw-bold); }
+  .platform-tag { position: absolute; top: 20px; right: 20px; font-size: 10px; font-weight: var(--fw-bold); letter-spacing: 1.5px; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; }
+  .platform-tag.core { background: var(--navy-900); color: #fff; }
+  .platform-tag.addon { background: var(--mint-500); color: var(--navy-900); }
+  @media (max-width: 900px) { .platform-grid { grid-template-columns: 1fr; } .platform-card { padding: 26px; } }
+
+  /* VALUE / ROI */
+  .value-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .value-card { background: #fff; border: 1px solid var(--stone-200); border-radius: var(--radius-2xl); padding: 30px; display: flex; flex-direction: column; position: relative; transition: all var(--duration-med) var(--ease-out); }
+  .value-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .value-card .v-icon { width: 46px; height: 46px; border-radius: var(--radius-lg); background: var(--mint-100); color: var(--mint-800); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-bottom: 18px; }
+  .value-lever { font-size: 10px; font-weight: var(--fw-bold); letter-spacing: 2px; text-transform: uppercase; color: var(--mint-700); display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .value-lever .lever-num { font-feature-settings: "tnum"; color: var(--stone-400); }
+  .value-card h3 { font-size: 19px; font-weight: var(--fw-bold); color: var(--navy-900); margin: 0 0 10px; letter-spacing: -0.01em; line-height: 1.22; }
+  .value-card p { font-size: 14.5px; line-height: 1.6; color: var(--stone-700); margin: 0; }
+  .value-card p strong { color: var(--navy-900); font-weight: var(--fw-bold); }
+  @media (max-width: 980px) { .value-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 680px) { .value-grid { grid-template-columns: 1fr; } }
+
+  /* PRICING */
+  .pricing-section { background: var(--navy-900); color: #fff; }
+  .pricing-section .eyebrow { color: var(--mint-300); }
+  .pricing-section .eyebrow::before { color: var(--mint-300); }
+  .pricing-section .section-title { color: #fff; }
+  .pricing-section .section-sub { color: rgba(255,255,255,0.78); }
+  .pricing-single { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .pricing-v2 { background: #fff; border-radius: var(--radius-3xl); padding: 40px; color: var(--navy-900); box-shadow: var(--shadow-xl); display: flex; flex-direction: column; }
+  .pricing-v2-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding-bottom: 22px; border-bottom: 1px solid var(--stone-200); }
+  .pricing-v2-header-l { flex: 1; min-width: 200px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .pricing-v2-header-l h3 { font-size: 21px; font-weight: var(--fw-bold); color: var(--navy-900); margin: 0; letter-spacing: -0.005em; }
+  .tier-badge { display: inline-flex; align-items: center; font-size: 10px; font-weight: var(--fw-bold); letter-spacing: 1.5px; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; background: var(--sky-100); color: #1A6FA8; }
+  .pricing-price { display: flex; align-items: baseline; gap: 10px; padding: 24px 0 4px; flex-wrap: wrap; }
+  .pricing-price .amt { font-size: 46px; font-weight: var(--fw-black); letter-spacing: -0.02em; color: var(--navy-900); font-feature-settings: "tnum"; line-height: 1; }
+  .pricing-price .per { font-size: 14px; font-weight: var(--fw-semi); color: var(--stone-700); }
+  .pricing-includes { font-size: 13px; color: var(--stone-700); line-height: 1.5; margin: 4px 0 22px; }
+  .pricing-includes strong { color: var(--mint-800); font-weight: var(--fw-bold); }
+  .pricing-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; margin-top: auto; }
+  .pricing-table tbody td { padding: 15px 0; border-top: 1px solid var(--stone-200); font-size: 14px; color: var(--navy-900); vertical-align: middle; }
+  .pricing-table tbody td:last-child { text-align: right; }
+  .pricing-line-label { font-size: 14px; font-weight: var(--fw-semi); color: var(--navy-900); display: flex; flex-direction: column; gap: 2px; }
+  .pricing-line-label .sub { font-size: 11.5px; color: var(--stone-500); font-weight: var(--fw-medium); }
+  .pricing-line-amt { font-size: 15px; font-weight: var(--fw-bold); color: var(--navy-900); white-space: nowrap; }
+  .pricing-line-amt s { color: var(--stone-400); text-decoration-thickness: 1px; font-weight: var(--fw-semi); margin-right: 6px; }
+  .billing-chip { font-size: 11px; font-weight: var(--fw-bold); letter-spacing: 1px; text-transform: uppercase; color: var(--stone-700); padding: 4px 9px; background: var(--stone-100); border-radius: 999px; display: inline-block; }
+  .billing-chip.onetime { background: var(--sun-100); color: #8C6A00; }
+
+  /* INVESTMENT SUMMARY */
+  .invest-card { margin-top: 20px; background: #fff; border-radius: var(--radius-3xl); padding: 40px 44px; color: var(--navy-900); box-shadow: var(--shadow-xl); }
+  .invest-head { font-size: 22px; font-weight: var(--fw-bold); color: var(--navy-900); margin: 0 0 4px; letter-spacing: -0.01em; }
+  .invest-sub { font-size: 14px; color: var(--stone-700); margin: 0 0 26px; line-height: 1.55; max-width: 620px; }
+  .invest-figs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1px solid var(--stone-200); border-radius: var(--radius-2xl); overflow: hidden; }
+  .invest-fig { padding: 26px 28px; border-right: 1px solid var(--stone-200); display: flex; flex-direction: column; gap: 6px; }
+  .invest-fig:last-child { border-right: none; }
+  .invest-fig.feature { background: var(--mint-100); }
+  .invest-fig .lbl { font-size: 10px; font-weight: var(--fw-bold); letter-spacing: 1.5px; text-transform: uppercase; color: var(--stone-500); }
+  .invest-fig.feature .lbl { color: var(--mint-800); }
+  .invest-fig .val { font-size: 34px; font-weight: var(--fw-black); letter-spacing: -0.025em; color: var(--navy-900); line-height: 1; font-variant-numeric: tabular-nums; }
+  .invest-fig .val .unit { font-size: 14px; font-weight: var(--fw-bold); color: var(--stone-500); }
+  .invest-fig.feature .val { color: var(--mint-800); }
+  .invest-fig .note { font-size: 12px; color: var(--stone-700); font-weight: var(--fw-medium); line-height: 1.4; }
+  @media (max-width: 760px) { .invest-figs { grid-template-columns: 1fr; } .invest-fig { border-right: none; border-bottom: 1px solid var(--stone-200); } .invest-fig:last-child { border-bottom: none; } }
+
+  .pricing-offset { margin-top: 20px; background: var(--navy-900); border-radius: var(--radius-2xl); padding: 30px 36px; display: grid; grid-template-columns: auto 1fr; gap: 32px; align-items: center; border: 1px solid rgba(255,255,255,0.1); }
+  .pricing-offset-fig { display: flex; flex-direction: column; gap: 6px; padding-right: 32px; border-right: 1px solid rgba(255,255,255,0.16); }
+  .pricing-offset-fig .lbl { font-size: 11px; font-weight: var(--fw-bold); letter-spacing: 1.5px; text-transform: uppercase; color: var(--mint-300); }
+  .pricing-offset-fig .big { font-size: 30px; font-weight: var(--fw-black); color: #fff; letter-spacing: -0.02em; line-height: 1.1; }
+  .pricing-offset-body { font-size: 15px; line-height: 1.55; color: rgba(255,255,255,0.85); font-weight: var(--fw-medium); }
+  .pricing-offset-body strong { color: #fff; font-weight: var(--fw-bold); }
+  .pricing-offset-body .mint { color: var(--mint-300); font-weight: var(--fw-bold); }
+  @media (max-width: 760px) { .pricing-v2 { padding: 28px; } .invest-card { padding: 28px; } .pricing-offset { grid-template-columns: 1fr; gap: 18px; padding: 24px; } .pricing-offset-fig { padding-right: 0; padding-bottom: 18px; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.16); } }
+
+  .pricing-terms-wrap { margin-top: 20px; background: #fff; border-radius: var(--radius-3xl); padding: 32px 44px; color: var(--navy-900); box-shadow: var(--shadow-xl); }
+  .pricing-terms-wrap h3 { font-size: 16px; font-weight: var(--fw-bold); color: var(--navy-900); margin: 0 0 18px; letter-spacing: -0.005em; }
+  .pricing-terms { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding: 22px 26px; background: var(--navy-100); border-radius: var(--radius-lg); }
+  .pricing-terms-item { display: flex; flex-direction: column; gap: 4px; }
+  .pricing-terms-item .lbl { font-size: 10px; font-weight: var(--fw-bold); letter-spacing: 1.5px; text-transform: uppercase; color: var(--stone-500); }
+  .pricing-terms-item .val { font-size: 14px; font-weight: var(--fw-bold); color: var(--navy-900); line-height: 1.3; }
+  .pricing-note { margin-top: 18px; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.55; }
+  @media (max-width: 900px) { .pricing-terms { grid-template-columns: repeat(2, 1fr); gap: 18px; padding: 20px; } .pricing-terms-wrap { padding: 26px; } }
+
+  /* INTEGRATION */
+  .integration-section { background: var(--stone-100); }
+  .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+  .stack-card { background: #fff; border: 1px solid var(--stone-200); border-radius: var(--radius-2xl); padding: 26px 28px; display: flex; flex-direction: column; gap: 10px; }
+  .stack-label { font-size: 10px; font-weight: var(--fw-bold); letter-spacing: 1.5px; text-transform: uppercase; color: var(--stone-500); }
+  .stack-name { font-size: 18px; font-weight: var(--fw-bold); color: var(--navy-900); letter-spacing: -0.005em; }
+  .stack-status { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: var(--fw-bold); padding: 4px 10px; border-radius: 999px; width: fit-content; }
+  .stack-status.connect { background: var(--mint-100); color: var(--mint-800); }
+  .stack-status.supported { background: var(--sky-100); color: #1A6FA8; }
+  .stack-detail { font-size: 13px; line-height: 1.55; color: var(--stone-700); margin-top: 4px; }
+
+  /* COLLATERAL */
+  .collateral-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .collateral-card { display: grid; grid-template-columns: 56px 1fr auto; gap: 18px; align-items: center; padding: 22px 24px; background: #fff; border: 1px solid var(--stone-200); border-radius: var(--radius-xl); text-decoration: none; transition: all var(--duration-med) var(--ease-out); }
+  .collateral-card:hover { border-color: var(--mint-500); box-shadow: var(--shadow-md); text-decoration: none; transform: translateY(-2px); }
+  .collateral-icon { width: 56px; height: 56px; border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .collateral-icon.deck { background: var(--mint-100); color: var(--mint-800); }
+  .collateral-icon.video { background: var(--rose-100); color: #B81E63; }
+  .collateral-icon.video2 { background: var(--sky-100); color: #1A6FA8; }
+  .collateral-icon.lock { background: var(--sun-100); color: #8C6A00; }
+  .collateral-body { min-width: 0; }
+  .collateral-title { font-size: 15px; font-weight: var(--fw-bold); color: var(--navy-900); margin-bottom: 4px; letter-spacing: -0.005em; }
+  .collateral-desc { font-size: 12.5px; color: var(--stone-700); line-height: 1.5; }
+  .collateral-arrow { color: var(--stone-500); transition: color var(--duration-med) var(--ease-out), transform var(--duration-med) var(--ease-out); }
+  .collateral-card:hover .collateral-arrow { color: var(--mint-700); transform: translateX(3px); }
+  @media (max-width: 720px) { .collateral-grid { grid-template-columns: 1fr; } }
+
+  /* FAQ */
+  .faq-list { display: flex; flex-direction: column; gap: 12px; }
+  .faq-item { background: #fff; border: 1px solid var(--stone-200); border-radius: var(--radius-xl); overflow: hidden; transition: all var(--duration-med) var(--ease-out); }
+  .faq-item[open] { border-color: var(--mint-300); box-shadow: var(--shadow-sm); }
+  .faq-q { padding: 22px 28px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 24px; font-size: 17px; font-weight: var(--fw-bold); color: var(--navy-900); letter-spacing: -0.005em; line-height: 1.35; }
+  .faq-q::-webkit-details-marker { display: none; }
+  .faq-toggle { width: 28px; height: 28px; border-radius: 50%; background: var(--stone-200); color: var(--navy-900); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all var(--duration-med) var(--ease-out); }
+  .faq-item[open] .faq-toggle { background: var(--mint-500); color: #fff; transform: rotate(45deg); }
+  .faq-a { padding: 0 28px 24px; font-size: 15px; line-height: 1.65; color: var(--stone-700); }
+  .faq-a strong { color: var(--navy-900); font-weight: var(--fw-bold); }
+
+  /* CONTACT */
+  .contact-section { background: var(--navy-900); color: #fff; position: relative; overflow: hidden; }
+  .contact-section::before { content: ""; position: absolute; bottom: -200px; right: -100px; width: 480px; height: 480px; background: radial-gradient(circle, rgba(43,204,137,0.3), transparent 70%); border-radius: 50%; }
+  .contact-section .eyebrow { color: var(--mint-300); }
+  .contact-section .eyebrow::before { color: var(--mint-300); }
+  .contact-section .section-title { color: #fff; }
+  .contact-section .section-sub { color: rgba(255,255,255,0.78); }
+  .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); max-width: 760px; gap: 20px; position: relative; z-index: 1; }
+  .contact-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); border-radius: var(--radius-2xl); padding: 28px; backdrop-filter: blur(8px); display: flex; flex-direction: column; gap: 20px; }
+  .contact-card-header { display: flex; align-items: center; gap: 16px; }
+  .contact-avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--mint-500); color: var(--navy-900); display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: var(--fw-black); flex-shrink: 0; }
+  .contact-name { font-size: 18px; font-weight: var(--fw-bold); color: #fff; }
+  .contact-title-text { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 2px; }
+  .contact-actions { display: flex; flex-direction: column; gap: 10px; }
+  .contact-email { display: inline-flex; align-items: center; gap: 8px; color: var(--mint-300); font-size: 14px; font-weight: var(--fw-semi); padding: 10px 14px; background: rgba(43,204,137,0.12); border-radius: var(--radius-md); text-decoration: none; width: fit-content; }
+  .contact-email:hover { background: rgba(43,204,137,0.22); text-decoration: none; }
+
+  /* FOOTER */
+  footer { background: #fff; padding: 40px 36px; border-top: 1px solid var(--stone-200); }
+  .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+  .footer-brand { display: flex; align-items: center; gap: 14px; }
+  .footer-brand img { height: 22px; display: block; }
+  .footer-brand .slash { font-size: 11px; color: var(--stone-500); letter-spacing: 1.5px; text-transform: uppercase; font-weight: var(--fw-bold); }
+  .footer-note { font-size: 12px; color: var(--stone-500); line-height: 1.6; max-width: 580px; }
+  .footer-note strong { color: var(--navy-900); font-weight: var(--fw-bold); }
+  .footer-note a { color: var(--mint-700); }
+
+  /* REVEAL */
+  .reveal { opacity: 1; }
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal { animation: revealIn 0.5s var(--ease-out) both; }
+  }
+  @keyframes revealIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#top" aria-label="Reeco home">
+      <img src="assets/reeco-logo-primary-green.svg" alt="Reeco">
+    </a>
+    <div class="nav-divider" aria-hidden="true"></div>
+    <div class="nav-context">Prepared for <strong>Summit Hospitality Group</strong></div>
+    <div class="nav-links">
+      <a href="#problem">Pain Points</a>
+      <a href="#platform">Platform</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a href="https://meetings.hubspot.com/billg6" target="_blank" rel="noopener" class="btn btn-primary nav-cta">Schedule time with Bill <span class="arr">&rarr;</span></a>
+  </div>
+</nav>
+
+<section class="hero" id="top" data-screen-label="Hero">
+  <div class="hero-inner">
+    <div>
+      <h1>Summit Hospitality Group <em>&times;</em> Reeco</h1>
+      <div class="hero-eyebrow"><span class="live-dot"></span>Digital Sales Room</div>
+      <p class="hero-sub">One connected platform for Purchasing, Receiving, and AP Automation &mdash; replacing manual, property-by-property buying and hand-keyed invoices with a single hospitality-native system, integrated with M3, Avendra, Paymerang, and Toast across all 19 properties.</p>
+      <div class="hero-actions">
+        <a href="https://meetings.hubspot.com/billg6" target="_blank" rel="noopener" class="btn btn-navy btn-lg">Schedule time with Bill <span class="arr">&rarr;</span></a>
+        <a href="#problem" class="btn btn-on-mint btn-lg">See the solution <span class="arr-down">&darr;</span></a>
+      </div>
+    </div>
+
+    <aside class="meeting-card" aria-label="Meeting context">
+      <div class="meeting-eyebrow">Next Step</div>
+      <div class="meeting-title">Review Proposal &amp; Implementation Plan</div>
+      <p style="font-size:15px;line-height:1.55;color:var(--stone-700);font-weight:var(--fw-medium);margin:14px 0 0;">Review the proposal together and map out the implementation plan.</p>
+    </aside>
+  </div>
+</section>
+
+<div class="hero-timeline">
+  <div class="hero-timeline-card reveal">
+    <div class="hero-timeline-label">
+      <div class="hero-timeline-eyebrow">/// What Happens Next</div>
+      <div class="hero-timeline-title">Your Path Forward</div>
+    </div>
+    <div class="ht-step">
+      <div class="ht-step-num">Step 01</div>
+      <div class="ht-step-title">Discovery &amp; Demo</div>
+      <div class="ht-step-date">Full platform walkthrough with your regional operations and accounting teams</div>
+    </div>
+    <div class="ht-step live">
+      <div class="ht-step-num">Step 02</div>
+      <div class="ht-step-title">Review Value Drivers &amp; Pricing</div>
+      <div class="ht-step-date">You're here &mdash; a digital sales room built around our conversation and your tech stack, showing the operational value your team gets from Reeco alongside a proposal tailored to your properties.</div>
+    </div>
+    <div class="ht-step future">
+      <div class="ht-step-num">Step 03</div>
+      <div class="ht-step-title">Review Proposal &amp; Implementation Plan</div>
+      <div class="ht-step-date">Review the proposal together and map out the implementation plan.</div>
+    </div>
+    <div class="ht-step future">
+      <div class="ht-step-num">Step 04</div>
+      <div class="ht-step-title">Decide &amp; Go Live</div>
+      <div class="ht-step-date">Decision by end of July &middot; live in 2&ndash;4 weeks, before budget season</div>
+    </div>
+  </div>
+</div>
+
+<section id="problem" data-screen-label="Problem and Solution">
+  <div class="container">
+    <div class="eyebrow">Section 02 &nbsp;/&nbsp; Business Case + Proposed Solution</div>
+    <h2 class="section-title">The Problems You Raised &mdash; and How Reeco Closes Them.</h2>
+    <p class="section-sub">You told us the goals were all of the above: save time, lower cost, tighten GPO compliance, and stop incorrect coding and missing invoices. Here are the four things slowing your team down today &mdash; and how Reeco closes each one.</p>
+
+    <div class="ps-list">
+
+      <div class="ps-pair reveal">
+        <div class="ps-num">01</div>
+        <div class="ps-card problem">
+          <div class="ps-eyebrow problem"><span class="ps-dot"></span>The Problem</div>
+          <h3 class="ps-headline">Purchasing Runs on No System at All</h3>
+          <p class="ps-body">Today purchasing is manually done by each property &mdash; and it's "all over the board." Teams jump between supplier websites, call reps, and reorder from memory. There's no way to compare prices across suppliers, so people default to the same vendor every time, and there's no control over what gets bought or from whom.</p>
+        </div>
+        <div class="ps-arrow" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+        <div class="ps-card answer">
+          <div class="ps-eyebrow answer"><span class="ps-dot"></span>The Answer</div>
+          <h3 class="ps-headline">Every Supplier in One Marketplace</h3>
+          <p class="ps-body">Reeco is product-first, not punch-out. All your suppliers and the exact items you want each property buying live in one place, so a team can build multiple POs at once and compare prices across suppliers on a single screen. It behaves like consumer shopping, so GMs and department heads pick it up in hours, and adoption sticks.</p>
+        </div>
+      </div>
+
+      <div class="ps-pair reveal">
+        <div class="ps-num">02</div>
+        <div class="ps-card problem">
+          <div class="ps-eyebrow problem"><span class="ps-dot"></span>The Problem</div>
+          <h3 class="ps-headline">Invoices Are Entered Into M3 by Hand</h3>
+          <p class="ps-body">Every property enters and codes its own invoices into M3 by hand. It's time-consuming &mdash; 10+ minutes per invoice &mdash; and because it relies on someone manually uploading each one, invoices can slip through and payments go out late. On top of that, since every property codes on its own, the coding is inconsistent, so corporate has to re-check everything before it posts.</p>
+        </div>
+        <div class="ps-arrow" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+        <div class="ps-card answer">
+          <div class="ps-eyebrow answer"><span class="ps-dot"></span>The Answer</div>
+          <h3 class="ps-headline">Invoices Coded in Seconds, Synced to M3</h3>
+          <p class="ps-body">You already have an AP email at each property &mdash; just add a rule to auto-forward those invoices to Reeco, and they are automatically uploaded as soon as they are received. Reeco reads every line item and applies the right GL from your M3 chart of accounts and coding patterns. What's manual today drops to about a minute per invoice &mdash; some customers under 30 seconds &mdash; with far less missing invoices and more on-time/early payments.</p>
+        </div>
+      </div>
+
+      <div class="ps-pair reveal">
+        <div class="ps-num">03</div>
+        <div class="ps-card problem">
+          <div class="ps-eyebrow problem"><span class="ps-dot"></span>The Problem</div>
+          <h3 class="ps-headline">Off-Program Spend Is Hard to Control</h3>
+          <p class="ps-body">Without one place to buy, it's hard to keep orders on-program. Spend drifts to vendors outside your GPO, which pulls volume away from Avendra &mdash; eroding your participation and the rebate checks you generate today.</p>
+        </div>
+        <div class="ps-arrow" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+        <div class="ps-card answer">
+          <div class="ps-eyebrow answer"><span class="ps-dot"></span>The Answer</div>
+          <h3 class="ps-headline">On-Program Buying Made Easy</h3>
+          <p class="ps-body">Your curated store makes the Avendra-compliant option the obvious one, and Avendra shares data with Reeco so those items are tagged automatically. When on-program is the easy path, more of your spend stays on-program &mdash; and your Avendra participation and drop-size incentives go up.</p>
+        </div>
+      </div>
+
+      <div class="ps-pair reveal">
+        <div class="ps-num">04</div>
+        <div class="ps-card problem">
+          <div class="ps-eyebrow problem"><span class="ps-dot"></span>The Problem</div>
+          <h3 class="ps-headline">Manual Approvals, No Real-Time Spend Visibility</h3>
+          <p class="ps-body">Approvals happen over email today, with no consistent way to route them from property to corporate &mdash; and because operators only see where they stand against budget at month-end, spend is already committed by the time anyone can react.</p>
+        </div>
+        <div class="ps-arrow" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+        <div class="ps-card answer">
+          <div class="ps-eyebrow answer"><span class="ps-dot"></span>The Answer</div>
+          <h3 class="ps-headline">Automated Approvals and Real-Time Spend Visibility</h3>
+          <p class="ps-body">Set approvals by amount, GL code, outlet, or user &mdash; a plumber's invoice to one approver, a capex order to another &mdash; delivered to phone, text, or email. Your M3 budget feeds into Reeco, so operators see where an order lands against budget before they place it, and anything over can route for approval first.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <aside class="callout-quote reveal">
+      <div class="callout-mark">&ldquo;</div>
+      <div class="callout-body">
+        <p>Reeco has had a real impact on our F&amp;B margins. On one line alone &mdash; gloves &mdash; we're saving about fifteen dollars a case just by comparing suppliers in the platform. Multiply that across every category and it adds up fast.</p>
+        <div class="callout-attr">
+          <div class="callout-avatar">SC</div>
+          <div>
+            <div class="callout-name">Shreem Capital</div>
+            <div class="callout-meta">Reeco customer &middot; purchasing &amp; cost savings</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section id="platform" class="platform-section" data-screen-label="Platform">
+  <div class="container">
+    <div class="eyebrow">Section 03 &nbsp;/&nbsp; The Platform</div>
+    <h2 class="section-title">What's Included.</h2>
+    <p class="section-sub">Your proposal covers the Reeco Bundle &mdash; Purchasing &amp; Receiving + AP Automation &mdash; across all 19 properties. Inventory and Culinary Management are add-ons for the properties that want them.</p>
+
+    <div class="platform-grid">
+      <article class="platform-card core reveal">
+        <span class="platform-tag core">In Your Bundle</span>
+        <div class="platform-card-head">
+          <div class="platform-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          </div>
+          <h3>Purchasing &amp; Receiving</h3>
+        </div>
+        <p>All your suppliers in one curated marketplace across F&amp;B, housekeeping, and maintenance &mdash; <strong>existing supplier agreements and Avendra pricing honored.</strong> Build carts from suggested orders, favorites, or shelf-to-sheet order guides on mobile. Receiving checks orders in against the PO, and Reeco's team chases missing items and credits for you.</p>
+      </article>
+
+      <article class="platform-card core reveal">
+        <span class="platform-tag core">In Your Bundle</span>
+        <div class="platform-card-head">
+          <div class="platform-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 13l2 2 4-4"/></svg>
+          </div>
+          <h3>AP Automation</h3>
+        </div>
+        <p>Every invoice captured, AI-coded by line item against your M3 chart of accounts, and matched to the PO and what was received. <strong>Hand-keying into M3 drops to about a minute per invoice.</strong> Approved invoices flow straight to M3 &mdash; and coding learns as it goes, getting faster and more accurate the longer you use it.</p>
+      </article>
+
+      <article class="platform-card addon reveal">
+        <span class="platform-tag addon">Potential Add-On</span>
+        <div class="platform-card-head">
+          <div class="platform-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          </div>
+          <h3>Inventory</h3>
+        </div>
+        <p>Counts on the mobile app that work offline, organized shelf-to-sheet in the order you actually store things. <strong>Real-time item values from your purchasing data</strong> &mdash; not an Excel guess &mdash; with variance and theoretical-vs-actual visibility, plus par-to-cart reordering. A natural next step once purchasing and AP are live.</p>
+      </article>
+
+      <article class="platform-card addon reveal">
+        <span class="platform-tag addon">Potential Add-On</span>
+        <div class="platform-card-head">
+          <div class="platform-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18"/><path d="M5 11V6a7 7 0 0 1 14 0v5"/><path d="M3 11l1.5 8a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2L21 11"/></svg>
+          </div>
+          <h3>Culinary Management</h3>
+        </div>
+        <p>Recipes and menus connected to live purchasing prices for <strong>clear food cost by dish</strong>. Integrates with Toast so you can see margins by dish and outlet, better engineer your menus, and make real-time adjustments to increase the profitability of your F&amp;B outlets.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="value" data-screen-label="Value">
+  <div class="container">
+    <div class="eyebrow">Section 04 &nbsp;/&nbsp; Where Reeco Drives Value</div>
+    <h2 class="section-title">Six Ways Reeco Pays for Itself.</h2>
+    <p class="section-sub">Each of these is a lever on cost, compliance, or time &mdash; and together they make Reeco a net gain for Summit Hospitality, not just another line item.</p>
+
+    <div class="value-grid">
+
+      <article class="value-card reveal">
+        <div class="v-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>
+        </div>
+        <div class="value-lever"><span class="lever-num">01</span> Lower Purchasing Costs</div>
+        <h3>Best Price Across Every Supplier</h3>
+        <p>With every supplier in one place, your team can finally compare and buy the best option instead of defaulting to the usual vendor &mdash; the price comparison nobody has time to do today, on a single screen.</p>
+      </article>
+
+      <article class="value-card reveal">
+        <div class="v-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+        </div>
+        <div class="value-lever"><span class="lever-num">02</span> Increase Your Rebates</div>
+        <h3>Avendra Participation</h3>
+        <p>Avendra shares data with Reeco, so on-program items are tagged and easy to pick, and the store can steer buying to the compliant option. The more your team buys on-program, the <strong>more rebates you generate</strong> &mdash; and you can see participation across every property.</p>
+      </article>
+
+      <article class="value-card reveal">
+        <div class="v-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16l2 2 4-4"/><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>
+        </div>
+        <div class="value-lever"><span class="lever-num">03</span> Recover Credits</div>
+        <h3>Receiving Services</h3>
+        <p>Report receiving challenges like short shipments, damaged items, and more in the app, and <strong>Reeco's team reaches out to the supplier for you</strong> &mdash; recovering the credit and finding out when missing items will be delivered. Your operators stop chasing suppliers, and you stop paying for what never arrived.</p>
+      </article>
+
+      <article class="value-card reveal">
+        <div class="v-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+        </div>
+        <div class="value-lever"><span class="lever-num">04</span> Know Before You Order</div>
+        <h3>Real-Time Budget Visibility</h3>
+        <p>Your M3 budget feeds into Reeco, so operators see exactly where an order lands against budget <strong>before they place it</strong> &mdash; not at month-end, when the money is already spent.</p>
+      </article>
+
+      <article class="value-card reveal">
+        <div class="v-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div class="value-lever"><span class="lever-num">05</span> Save Time on AP</div>
+        <h3>Hours Back Every Week</h3>
+        <p>Invoices arrive by email and come in pre-coded, so getting this data into M3 drops from about 10 minutes to 1 minute &mdash; <strong>12+ hours saved per 100 invoices</strong>. Fewer invoices go missing, and more get paid on time, which also protects any early-pay incentives with your suppliers.</p>
+      </article>
+
+      <article class="value-card reveal">
+        <div class="v-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        </div>
+        <div class="value-lever"><span class="lever-num">06</span> Approvals &amp; Guardrails</div>
+        <h3>Automated, Multi-Level Approvals</h3>
+        <p>Route approvals by amount, GL, outlet, or user &mdash; a plumber's invoice one way, a capex order another &mdash; across as many levels as you need, from property to corporate. <strong>The control your team asked for</strong>, delivered to phone, text, or email.</p>
+      </article>
+
+    </div>
+
+    <aside class="callout-quote mint reveal">
+      <div class="callout-mark">&ldquo;</div>
+      <div class="callout-body">
+        <p>It's so much more user friendly than the platform we were on. And it connects automatically to the other systems. With the live pricing &mdash; plus we can build in the other inventory, the linens and the housekeeping, all the guest supplies &mdash; into one big platform.</p>
+        <div class="callout-attr">
+          <div class="callout-avatar">TH</div>
+          <div>
+            <div class="callout-name">Tandem Hospitality Group</div>
+            <div class="callout-meta">Platform comparison &middot; user adoption</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section id="pricing" class="pricing-section" data-screen-label="Pricing">
+  <div class="container">
+    <div class="eyebrow">Section 05 &nbsp;/&nbsp; Pricing</div>
+    <h2 class="section-title">Your Proposal.</h2>
+    <p class="section-sub">The Reeco Bundle &mdash; Purchasing &amp; Receiving + AP Automation &mdash; priced per property, per month across your 1 full service and 18 select service properties. Your proposal pricing includes <strong style="color:#fff;">20% off subscription</strong> and <strong style="color:#fff;">50% off setup</strong>.</p>
+
+    <div class="pricing-single">
+      <div class="pricing-v2 reveal">
+        <div class="pricing-v2-header">
+          <div class="pricing-v2-header-l">
+            <h3>Full Service</h3>
+            <span class="tier-badge" style="background:var(--navy-900);color:#fff;">1 Property</span>
+          </div>
+        </div>
+        <div class="pricing-price">
+          <span class="amt">$520</span>
+          <span class="per">/ property / month</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:9px;margin:-2px 0 4px;">
+          <span style="font-size:15px;color:var(--stone-400);text-decoration:line-through;font-weight:var(--fw-semi);">$650</span>
+          <span style="font-size:10px;font-weight:var(--fw-bold);letter-spacing:0.8px;text-transform:uppercase;color:var(--mint-800);background:var(--mint-100);padding:4px 9px;border-radius:999px;">20% off subscription</span>
+        </div>
+        <p class="pricing-includes"><strong>Purchasing &amp; Receiving + AP Automation</strong></p>
+        <table class="pricing-table">
+          <tbody>
+            <tr>
+              <td><span class="pricing-line-label">Reeco Bundle<span class="sub">List $650 &middot; 20% off</span></span></td>
+              <td><span class="billing-chip">Monthly</span></td>
+              <td><span class="pricing-line-amt"><s>$650</s>$520.00</span></td>
+            </tr>
+            <tr>
+              <td><span class="pricing-line-label">One-Time Setup<span class="sub">50% off &middot; per property</span></span></td>
+              <td><span class="billing-chip onetime">One-Time</span></td>
+              <td><span class="pricing-line-amt"><s>$1,000</s>$500.00</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pricing-v2 reveal">
+        <div class="pricing-v2-header">
+          <div class="pricing-v2-header-l">
+            <h3>Select Service</h3>
+            <span class="tier-badge">18 Properties</span>
+          </div>
+        </div>
+        <div class="pricing-price">
+          <span class="amt">$400</span>
+          <span class="per">/ property / month</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:9px;margin:-2px 0 4px;">
+          <span style="font-size:15px;color:var(--stone-400);text-decoration:line-through;font-weight:var(--fw-semi);">$500</span>
+          <span style="font-size:10px;font-weight:var(--fw-bold);letter-spacing:0.8px;text-transform:uppercase;color:var(--mint-800);background:var(--mint-100);padding:4px 9px;border-radius:999px;">20% off subscription</span>
+        </div>
+        <p class="pricing-includes"><strong>Purchasing &amp; Receiving + AP Automation</strong></p>
+        <table class="pricing-table">
+          <tbody>
+            <tr>
+              <td><span class="pricing-line-label">Reeco Bundle<span class="sub">List $500 &middot; 20% off</span></span></td>
+              <td><span class="billing-chip">Monthly</span></td>
+              <td><span class="pricing-line-amt"><s>$500</s>$400.00</span></td>
+            </tr>
+            <tr>
+              <td><span class="pricing-line-label">One-Time Setup<span class="sub">50% off &middot; per property</span></span></td>
+              <td><span class="billing-chip onetime">One-Time</span></td>
+              <td><span class="pricing-line-amt"><s>$1,000</s>$500.00</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="reveal" style="margin-top:20px;background:#fff;border-radius:var(--radius-2xl);padding:26px 32px;box-shadow:var(--shadow-xl);display:flex;flex-wrap:wrap;gap:16px 36px;align-items:center;">
+      <span style="font-size:11px;font-weight:var(--fw-bold);letter-spacing:1.5px;text-transform:uppercase;color:var(--stone-500);width:100%;">Included</span>
+      <span style="display:inline-flex;align-items:center;gap:10px;font-size:14.5px;font-weight:var(--fw-semi);color:var(--navy-900);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--mint-700)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Unlimited users
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:10px;font-size:14.5px;font-weight:var(--fw-semi);color:var(--navy-900);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--mint-700)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Unlimited POs &amp; invoices
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:10px;font-size:14.5px;font-weight:var(--fw-semi);color:var(--navy-900);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--mint-700)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        All integrations
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:10px;font-size:14.5px;font-weight:var(--fw-semi);color:var(--navy-900);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--mint-700)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        A dedicated Customer Success Partner based in our Miami office
+      </span>
+    </div>
+
+    <div class="invest-card reveal">
+      <h3 class="invest-head">Your Investment at a Glance</h3>
+      <p class="invest-sub">All 19 properties on the Reeco Bundle &mdash; 1 full service and 18 select service.</p>
+      <div class="invest-figs">
+        <div class="invest-fig">
+          <span class="lbl">Monthly Subscription</span>
+          <span class="val">$7,720<span class="unit"> / mo</span></span>
+          <span class="note">18 select ($400) + 1 full ($520)</span>
+        </div>
+        <div class="invest-fig feature">
+          <span class="lbl">Annual Subscription</span>
+          <span class="val">$92,640<span class="unit"> / yr</span></span>
+          <span class="note">$7,720 &times; 12 months</span>
+        </div>
+        <div class="invest-fig">
+          <span class="lbl">One-Time Setup</span>
+          <span class="val">$9,500</span>
+          <span class="note">19 properties &times; $500</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pricing-offset reveal">
+      <div class="pricing-offset-fig">
+        <span class="lbl">M3 Integration Fees</span>
+        <span class="big">$0 &mdash; Waived</span>
+      </div>
+      <div class="pricing-offset-body">
+        As an <strong>M3 strategic partner</strong>, <span class="mint">M3 waives integration fees for Reeco</span>. For any other solutions, M3 will charge a set-up and monthly subscription for the integration.
+      </div>
+    </div>
+
+    <div class="pricing-terms-wrap reveal">
+      <h3>Proposal Terms</h3>
+      <div class="pricing-terms">
+        <div class="pricing-terms-item">
+          <span class="lbl">Scope</span>
+          <span class="val">19 Properties &middot; 1 Full + 18 Select</span>
+        </div>
+        <div class="pricing-terms-item">
+          <span class="lbl">Subscription</span>
+          <span class="val">$400&ndash;$520 / property / mo</span>
+        </div>
+        <div class="pricing-terms-item">
+          <span class="lbl">Setup</span>
+          <span class="val">$500 / property</span>
+        </div>
+        <div class="pricing-terms-item">
+          <span class="lbl">Go-Live</span>
+          <span class="val">2&ndash;4 Weeks</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pricing-note">Proposal valid through July 31, 2026; final scope and start date confirmed at contracting.</div>
+  </div>
+</section>
+
+<section id="integration" class="integration-section" data-screen-label="Integration">
+  <div class="container">
+    <div class="eyebrow">Section 06 &nbsp;/&nbsp; Integration</div>
+    <h2 class="section-title">How We Connect.</h2>
+    <p class="section-sub">Reeco plugs into the systems Summit already runs &mdash; no rip-and-replace on your accounting, forecasting, GPO, or payments. Most of the setup is done by us on the back end.</p>
+
+    <div class="stack-grid">
+      <div class="stack-card reveal">
+        <div class="stack-label">Accounting &amp; Forecasting</div>
+        <div class="stack-name">M3</div>
+        <div class="stack-status connect">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Strategic Partnership
+        </div>
+        <div class="stack-detail">As an M3 strategic partner, Reeco integrates directly and integration fees are waived. GL codes and suppliers pull into Reeco, and approved invoices flow back to M3. Your M3 forecast feeds in too, so every order is measured against budget before it's placed.</div>
+      </div>
+
+      <div class="stack-card reveal">
+        <div class="stack-label">Buying Group / GPO</div>
+        <div class="stack-name">Avendra</div>
+        <div class="stack-status connect">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Strategic Partnership
+        </div>
+        <div class="stack-detail">Your Avendra agreement carries over and Reeco honors your pricing and contracts. On-program items are tagged in the store, so it's easier to track your participation and help ensure rebates go up.</div>
+      </div>
+
+      <div class="stack-card reveal">
+        <div class="stack-label">Payments</div>
+        <div class="stack-name">Paymerang</div>
+        <div class="stack-status connect">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Strategic Partnership
+        </div>
+        <div class="stack-detail">Pay through the Paymerang integration right from Reeco, and the status updates in both M3 and Paymerang.</div>
+      </div>
+
+      <div class="stack-card reveal">
+        <div class="stack-label">Point of Sale</div>
+        <div class="stack-name">Toast</div>
+        <div class="stack-status connect">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Integration
+        </div>
+        <div class="stack-detail">Bring in menu prices and sales data from Toast to help you understand real-time profit margins, better engineer menus, and see inventory depletions based on sales data.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="library" data-screen-label="Library">
+  <div class="container">
+    <div class="eyebrow">Section 07 &nbsp;/&nbsp; Collateral Library</div>
+    <h2 class="section-title">Everything in One Place.</h2>
+    <p class="section-sub">Background materials your team can review ahead of the decision.</p>
+
+    <div class="collateral-grid">
+      <a class="collateral-card reveal" href="https://app.fireflies.ai/view/Summit-Hospitality-Group-Reeco::01KW7M6TS0R3371H5P2ZFVEER4" target="_blank" rel="noopener">
+        <div class="collateral-icon video2">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+        </div>
+        <div class="collateral-body">
+          <div class="collateral-title">Your Demo Recording</div>
+          <div class="collateral-desc">The full walkthrough with the Summit Hospitality team &mdash; purchasing, receiving, AP, inventory, and culinary, end to end. Share it with anyone who couldn't make the call.</div>
+        </div>
+        <div class="collateral-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+
+      <a class="collateral-card reveal" href="https://www.youtube.com/watch?v=PpZ3-WQRPKs" target="_blank" rel="noopener">
+        <div class="collateral-icon video">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        </div>
+        <div class="collateral-body">
+          <div class="collateral-title">L5 Hospitality &mdash; Customer Testimonial</div>
+          <div class="collateral-desc">An M3 customer using Reeco for Purchasing, Receiving, and AP.</div>
+        </div>
+        <div class="collateral-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+
+      <a class="collateral-card reveal" href="https://www.youtube.com/watch?v=Cu7ihJjrPdg" target="_blank" rel="noopener">
+        <div class="collateral-icon deck">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="collateral-body">
+          <div class="collateral-title">Vision Hospitality Group &mdash; Customer Testimonial</div>
+          <div class="collateral-desc">An M3 customer using Reeco for Purchasing, Receiving, and AP.</div>
+        </div>
+        <div class="collateral-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+
+      <a class="collateral-card reveal" href="#contact-bill">
+        <div class="collateral-icon lock">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="collateral-body">
+          <div class="collateral-title">Security &amp; Compliance Docs</div>
+          <div class="collateral-desc">SOC 2 Type II documentation available on request &mdash; email Bill and we'll send the full report within 24 hours.</div>
+        </div>
+        <div class="collateral-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="faq" data-screen-label="FAQ">
+  <div class="container">
+    <div class="eyebrow">Section 08 &nbsp;/&nbsp; FAQs</div>
+    <h2 class="section-title">Questions From the Room &mdash; Answered Directly.</h2>
+    <p class="section-sub">A few of the questions your team raised on the call. If something's missing, email Bill and we'll add it.</p>
+
+    <div class="faq-list">
+      <details class="faq-item" open>
+        <summary class="faq-q">
+          <span>"We don't run any purchasing system today. Is a platform like this hard to roll out?"</span>
+          <span class="faq-toggle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </summary>
+        <div class="faq-a">No &mdash; onboarding is <strong>2 to 4 weeks</strong>, and most of it is done by Reeco on the back end. We build the store from the order guides and history on your supplier sites, set up the integrations, and help configure your approvals and order guides. You get a dedicated strategic customer success partner plus an onboarding team, and the app is built to be consumer-simple so operators pick it up fast. Well within reach before your September budget season.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q">
+          <span>"Can we keep Avendra and our current supplier agreements?"</span>
+          <span class="faq-toggle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </summary>
+        <div class="faq-a"><strong>Yes &mdash; that's entirely your call.</strong> Reeco isn't a GPO and doesn't change who you buy through. Your Avendra agreement, supplier relationships, and pricing are all honored. Through Avendra's data sharing, on-program items are tagged in your store so buying compliant is the easy path &mdash; and you keep full control over exactly what's in each property's store.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q">
+          <span>"How long does onboarding take?"</span>
+          <span class="faq-toggle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </summary>
+        <div class="faq-a">AP can be live within about a week, and <strong>both modules &mdash; Purchasing &amp; Receiving and AP Automation &mdash; are typically live within 2&ndash;4 weeks.</strong> A dedicated customer success partner from Reeco guides the rollout, so it stays a light lift on your side.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-q">
+          <span>"If coding is wrong at the order, how does it get fixed?"</span>
+          <span class="faq-toggle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </summary>
+        <div class="faq-a">It's all connected, so coding can be corrected at the invoice or during approval &mdash; and <strong>Reeco learns from the change</strong>. It codes based on what it sees most often, at both the line-item and user level, so as your team adjusts, coding gets more accurate over time and stays consistent from property to property.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section id="contact-bill" class="contact-section" data-screen-label="Your Team">
+  <div class="container">
+    <div class="eyebrow">Section 09 &nbsp;/&nbsp; Your Team</div>
+    <h2 class="section-title">Questions Before You Decide?</h2>
+    <p class="section-sub">Reach out directly &mdash; we're here before, during, and after the decision.</p>
+
+    <div class="contact-grid">
+      <div class="contact-card reveal">
+        <div class="contact-card-header">
+          <div class="contact-avatar">BG</div>
+          <div>
+            <div class="contact-name">Bill Green</div>
+            <div class="contact-title-text">Director of Sales, Reeco</div>
+          </div>
+        </div>
+        <div class="contact-actions">
+          <a class="contact-email" id="bill-email" href="#">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="email-text">email Bill</span>
+          </a>
+          <a class="contact-email" href="tel:+16036307859" style="color:#fff; background: rgba(255,255,255,0.06);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            +1 (603) 630-7859
+          </a>
+          <a class="contact-email" href="https://meetings.hubspot.com/billg6" target="_blank" rel="noopener" style="background: var(--mint-500); color: var(--navy-900); font-weight: var(--fw-bold);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Book time with Bill
+          </a>
+        </div>
+      </div>
+
+      <div class="contact-card reveal">
+        <div class="contact-card-header">
+          <div class="contact-avatar" style="background:var(--navy-100);color:var(--navy-900);">DR</div>
+          <div>
+            <div class="contact-name">David Roberts</div>
+            <div class="contact-title-text">Account Manager, M3</div>
+          </div>
+        </div>
+        <div class="contact-actions">
+          <a class="contact-email" href="mailto:david.roberts@m3as.com">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            david.roberts@m3as.com
+          </a>
+          <a class="contact-email" href="tel:+15513685738" style="color:#fff; background: rgba(255,255,255,0.06);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            +1 (551) 368-5738
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="assets/reeco-logo-primary-green.svg" alt="Reeco">
+      <span class="slash">/// Digital Sales Room</span>
+    </div>
+    <div class="footer-note">
+      This page was prepared exclusively for <strong>Summit Hospitality Group</strong> as part of an active partnership discussion with Reeco. Learn more at <a href="https://www.reeco.com" target="_blank" rel="noopener">reeco.com</a>.
+    </div>
+  </div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() {
+    const root = this.el || document;
+    const eu = 'billg', ed = 'reeco.com';
+    const be = root.querySelector('#bill-email');
+    if (be) { be.href = 'mailto:' + eu + '@' + ed; const t = be.querySelector('.email-text'); if (t) t.textContent = eu + '@' + ed; }
+  }
+}
+</script>
+</body>
+</html>
